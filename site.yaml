@@ -14,8 +14,25 @@
           - python3
           - python3-venv
           - python3-pip
+          - ufw
         state: present
         update_cache: yes
+
+    - name: Allow SSH through firewall
+      ufw:
+        rule: allow
+        port: 22
+        proto: tcp
+
+    - name: Allow Flask port 5000
+      ufw:
+        rule: allow
+        port: "{{ flask_port }}"
+        proto: tcp
+
+    - name: Enable UFW
+      ufw:
+        state: enabled
 
     - name: Create application directory
       file:
@@ -23,30 +40,11 @@
         state: directory
         mode: "0755"
 
-    - name: Create Flask app
+    - name: Copy application2.py
       copy:
+        src: application2.py
         dest: "{{ app_dir }}/application2.py"
-        content: |
-          import flask
-          import time
-          import socket
-
-          h_name = socket.gethostname()
-
-          try:
-              IP_addres = socket.gethostbyname(h_name)
-          except:
-              IP_addres = "unknown"
-
-          app = flask.Flask(__name__)
-
-          @app.route('/')
-          def index():
-              Time = time.strftime("%H:%M:%S")
-              return Time + " Serving from " + h_name + " (" + IP_addres + ")\n"
-
-          if __name__ == "__main__":
-              app.run(host="0.0.0.0", port=5000)
+        mode: "0755"
 
     - name: Create virtual environment
       command: python3 -m venv {{ app_dir }}/venv
@@ -59,9 +57,10 @@
     - name: Create systemd service
       copy:
         dest: /etc/systemd/system/flask_app.service
+        mode: "0644"
         content: |
           [Unit]
-          Description=Flask App
+          Description=NSO Flask App
           After=network.target
 
           [Service]
@@ -98,20 +97,36 @@
   hosts: HAproxy
   become: yes
 
-  vars:
-    flask_port: 5000
-
   tasks:
-    - name: Install HAProxy
+    - name: Install HAProxy and UFW
       apt:
-        name: haproxy
+        name:
+          - haproxy
+          - ufw
         state: present
         update_cache: yes
+
+    - name: Allow SSH through firewall
+      ufw:
+        rule: allow
+        port: 22
+        proto: tcp
+
+    - name: Allow HTTP port 80
+      ufw:
+        rule: allow
+        port: 80
+        proto: tcp
+
+    - name: Enable UFW
+      ufw:
+        state: enabled
 
     - name: Configure HAProxy
       template:
         src: templates/haproxy.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
+        mode: "0644"
       notify: restart haproxy
 
     - name: Restart HAProxy immediately
