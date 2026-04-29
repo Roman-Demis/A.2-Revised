@@ -99,7 +99,7 @@
   become: yes
 
   vars:
-    flask_port: 80
+    flask_port: 5000
 
   tasks:
     - name: Install HAProxy

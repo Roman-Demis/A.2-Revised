@@ -3,6 +3,7 @@ global
     maxconn 2000
     user haproxy
     group haproxy
+    daemon
 
 defaults
     log global
@@ -22,5 +23,5 @@ backend flask_servers
     balance roundrobin
     option httpchk GET /
 {% for host in groups['webservers'] %}
-    server {{ host }} {{ hostvars[host]['ansible_host'] }}:5000 check
+    server {{ host }} {{ host }}:5000 check
 {% endfor %}
