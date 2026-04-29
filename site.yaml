@@ -73,11 +73,11 @@
           WantedBy=multi-user.target
       notify: restart flask
 
-    - name: Enable and start Flask
+    - name: Enable and restart Flask
       systemd:
         name: flask_app
         enabled: yes
-        state: started
+        state: restarted
         daemon_reload: yes
 
     - name: Wait for Flask app
