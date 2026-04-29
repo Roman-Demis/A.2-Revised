@@ -1,18 +1,23 @@
-#Simple flask services/applications for various assignments.
-# 
-# main.py: Online calculator, supports only 'add'.
-# application2.py: Replies with a string containing the Time and hostname.
-# assignment2.py: Replies with an HTML formatted string containing the Time and hostname.
+# NSO Assignment 2 – HAProxy + Flask + Ansible
 
-#export FLASK_APP=<filename>
-#export FLASK_RUN_HOST=<localhost|0.0.0.0>
-#export FLASK_RUN_PORT=8210
+## Description
 
+This project deploys a Flask application on three backend servers (devA, devB, devC) and configures HAProxy as a load balancer.
 
+## Files
 
-Usage Example:
-export FLASK_APP=main.py
-export FLASK_RUN_HOST=localhost
-export FLASK_RUN_PORT=8210
-flask run
+* hosts → Ansible inventory
+* site.yaml → Playbook
+* application2.py → Flask app
+* templates/haproxy.cfg.j2 → HAProxy configuration
+
+## Usage
+
+Run:
+ansible-playbook -i hosts site.yaml
+
+## Result
+
+HAProxy listens on port 80 and forwards traffic to Flask apps running on port 5000.
+
 
