@@ -5,7 +5,7 @@
 
   vars:
     app_dir: "/opt/NSO_A2"
-    flask_port: 5000
+    flask_port: 7000
 
   tasks:
     - name: Install required packages
@@ -24,7 +24,7 @@
         port: 22
         proto: tcp
 
-    - name: Allow Flask port 5000
+    - name: Allow Flask backend port
       ufw:
         rule: allow
         port: "{{ flask_port }}"
@@ -65,7 +65,7 @@
 
           [Service]
           WorkingDirectory={{ app_dir }}
-          ExecStart={{ app_dir }}/venv/bin/python {{ app_dir }}/application2.py
+          ExecStart={{ app_dir }}/venv/bin/flask --app {{ app_dir }}/application2.py run --host=0.0.0.0 --port={{ flask_port }}
           Restart=always
 
           [Install]

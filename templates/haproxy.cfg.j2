@@ -26,5 +26,5 @@ backend flask_servers
     balance roundrobin
     option httpchk GET /
 {% for host in groups['webservers'] %}
-    server {{ host }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:5000 check
+    server {{ host }} {{ hostvars[host]['ansible_default_ipv4']['address'] }}:7000 check
 {% endfor %}
