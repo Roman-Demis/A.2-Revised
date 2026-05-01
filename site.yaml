@@ -65,8 +65,7 @@
 
           [Service]
           WorkingDirectory={{ app_dir }}
-          ExecStart={{ app_dir }}/venv/bin/flask --app {{ app_dir }}/application2.py run --host=0.0.0.0 --port={{ flask_port }}
-          Restart=always
+          ExecStart={{ app_dir }}/venv/bin/python -c "import application2; application2.app.run(host='0.0.0.0', port=7000)"
 
           [Install]
           WantedBy=multi-user.target
